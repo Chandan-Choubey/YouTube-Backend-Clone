@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-playlistSchema = new Schema(
+const playlistSchema = new Schema(
   {
     name: {
       type: String,
@@ -13,15 +13,15 @@ playlistSchema = new Schema(
       required: true,
       trim: true,
     },
-    video: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Video",
-      required: true,
-    },
+    video: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Video",
+      },
+    ],
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
   },
   { timestamps: true }
