@@ -1,11 +1,11 @@
 import mongoose, { isValidObjectId } from "mongoose";
 import { Like } from "../models/like.model.js";
 import { Video } from "../models/videos.model.js";
-import { Comment, Comment } from "../models/comment.model.js";
+import { Comment } from "../models/comment.model.js";
 import { Tweet } from "../models/tweet.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import asyncHandler from "../utils/asyncHandler.js";
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
   //TODO: toggle like on video
@@ -37,8 +37,7 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
   }
 
   const message = isLiking ? "Like video success" : "Unlike video success";
-  z;
-  res.status(200).json(ApiResponse(200, {}, message));
+  res.status(200).json(new ApiResponse(200, {}, message));
 });
 
 const toggleCommentLike = asyncHandler(async (req, res) => {
@@ -63,14 +62,14 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
     isLiking = false;
   } else {
     await Like.create({
-      comment: commentId,
+      comments: commentId,
       likedBy: req.user._id,
     });
     isLiking = true;
   }
 
   const message = isLiking ? "Like comment success" : "Unlike comment success";
-  res.status(200).json(ApiResponse(200, {}, message));
+  res.status(200).json(new ApiResponse(200, {}, message));
 });
 
 const toggleTweetLike = asyncHandler(async (req, res) => {
@@ -102,7 +101,7 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
     isLiking = true;
   }
   const message = isLiking ? "Like tweet success" : "Unlike tweet success";
-  res.status(200).json(ApiResponse(200, {}, message));
+  res.status(200).json(new ApiResponse(200, {}, message));
 });
 
 const getLikedVideos = asyncHandler(async (req, res) => {
@@ -116,19 +115,9 @@ const getLikedVideos = asyncHandler(async (req, res) => {
     {
       $lookup: {
         from: "videos",
-        localField: "likedBy",
+        localField: "video",
         foreignField: "_id",
         as: "videos",
-        pagination: [
-          {
-            $project: {
-              title: 1,
-              videoFile: 1,
-              thumbnail: 1,
-              views: 1,
-            },
-          },
-        ],
       },
     },
   ]);
